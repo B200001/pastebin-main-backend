@@ -2,16 +2,20 @@ import { nanoid } from "nanoid";
 import { redis } from "../_redis.js";
 import { setCors } from "../_cors.js";
 
-
 export default async function handler(req, res) {
-  setCors(res)
+  setCors(res);
+
+  // ✅ HANDLE PREFLIGHT
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { content, ttl_seconds, max_views } = req.body;
+  const { content, ttl_seconds, max_views } = req.body || {};
 
-  // Validation
   if (!content || typeof content !== "string" || content.trim() === "") {
     return res.status(400).json({ error: "Invalid content" });
   }
@@ -31,9 +35,8 @@ export default async function handler(req, res) {
   }
 
   const id = nanoid(10);
-  const createdAt = Date.now();
   const expiresAt = ttl_seconds
-    ? createdAt + ttl_seconds * 1000
+    ? Date.now() + ttl_seconds * 1000
     : null;
 
   await redis.set(`paste:${id}`, {
@@ -43,7 +46,7 @@ export default async function handler(req, res) {
     expires_at: expiresAt,
   });
 
-  res.status(201).json({
+  return res.status(201).json({
     id,
     url: `${req.headers.origin}/p/${id}`,
   });
