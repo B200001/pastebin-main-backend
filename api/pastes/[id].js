@@ -1,4 +1,4 @@
-import { redis } from "../_redis";
+import { redis } from "../_redis.js";
 
 function nowMs(req) {
   if (

@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { redis } from "../_redis";
+import { redis } from "../_redis.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
