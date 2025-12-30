@@ -1,7 +1,10 @@
 import { nanoid } from "nanoid";
 import { redis } from "../_redis.js";
+import { setCors } from "../_cors.js";
+
 
 export default async function handler(req, res) {
+  setCors(res)
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }

@@ -1,4 +1,5 @@
 import { redis } from "../_redis.js";
+import { setCors } from "../_cors.js";
 
 function nowMs(req) {
   if (
@@ -11,6 +12,7 @@ function nowMs(req) {
 }
 
 export default async function handler(req, res) {
+  setCors(res);
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
